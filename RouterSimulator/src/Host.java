@@ -14,6 +14,7 @@ public class Host {
 	 */
 	public Host[] decode(Message msg) {
 		// TODO change the return to the host values.
+		
 		return null;
 	}
 }
