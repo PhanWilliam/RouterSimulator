@@ -56,6 +56,9 @@ public class Router implements Runnable{
 		this.neighbors = new Router[5];
 		this.host = new Vector<Host>();
 		this.thread = new Thread(this);		
+		
+		initializeDistance();
+		readFile();
 	}
 	
 	/**
