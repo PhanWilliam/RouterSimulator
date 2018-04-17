@@ -1,4 +1,12 @@
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Scanner;
 import java.util.Vector;
+
+import org.omg.CosNaming.NamingContextPackage.NotEmpty;
 
 public class Router implements Runnable{
 	
@@ -7,6 +15,14 @@ public class Router implements Runnable{
 	 */
 	private int id;
 	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	/**
 	 * Each router know about the other router
 	 * by having the objects in their class.
@@ -15,6 +31,7 @@ public class Router implements Runnable{
 	 * process.
 	 */
 	private Router neighbors[];
+	private int distance[]=new int [5];
 	
 	/**
 	 * Host is stored 'virtually'
@@ -78,19 +95,54 @@ public class Router implements Runnable{
 	public void send(Message msg) {}
 	
 	/**
+	 * Initialize all the distance to possible neighbor to
+	 * integer max value except to itself.
+	 * 
+	 * NOTE the index is the id for each router
+	 */
+	public void initializeDistance() {
+		for(int i=0;i<5;i++) {
+			distance[i] = Integer.MAX_VALUE;
+		}
+		distance[this.id]=0;
+	}
+	/**
 	 * Enable the router to read a file and extracting
 	 * the router next hop and distance.
 	 * 
 	 * TODO make sure that the router could do everything 
 	 * of the following:
-	 * - Read the file according to the parameter received.
-	 * - Decode the file.
-	 * - Extract the value.
 	 * - File the RoutingTable with the value from the file.
 	 * - 
 	 */
-	public void readFile(String Filename) {}
-	Vector<String> content = new Vector<String>();
+	
+	public void readFile() {
+		Vector<String> content = new Vector<String>();
+		try {
+			Scanner in = new Scanner(new FileReader("RoutersFile/"+this.id+".txt"));
+			while(in.hasNextLine()) {
+				content.add(in.nextLine());
+			}
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		for (String string : content) {
+			if(string.startsWith("R")) {
+				String temp[] ;
+				temp = string.substring(1,string.length()).split("#");
+				distance[Integer.parseInt(temp[0])]=Integer.parseInt(temp[1]);
+			}
+			else if(string.startsWith("H")) {
+				String temp;
+				temp = string.substring(1,string.length());
+				this.host.add(new Host(temp,80));
+				
+			}
+		}
+		
+	}
 	
 	
 	
