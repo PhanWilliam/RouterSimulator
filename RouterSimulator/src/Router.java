@@ -86,9 +86,13 @@ public class Router implements Runnable{
 	 * - Read the file according to the parameter received.
 	 * - Decode the file.
 	 * - Extract the value.
-	 * - Fille the RoutingTable with the value from the file.
+	 * - File the RoutingTable with the value from the file.
+	 * - 
 	 */
-	public void readFile(String fileName) {}
+	public void readFile(String Filename) {}
+	Vector<String> content = new Vector<String>();
+	
+	
 	
 	/**
 	 * Enable the router to check which router is linked into
