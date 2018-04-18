@@ -8,9 +8,11 @@ public class ThreadedServer extends Thread{
 	
 	private ServerSocket serverSocket;
 	private String msg;
+	private Router router;
 	
-	public ThreadedServer(int port) throws IOException {
+	public ThreadedServer(int port, Router router) throws IOException {
 		serverSocket = new ServerSocket(port);
+		this.router = router;
 		System.out.println(serverSocket + " listening on port " + port);		
 	}
 	
@@ -30,11 +32,8 @@ public class ThreadedServer extends Thread{
 	public void run() {
 		while (true) {
 			try {
-				ThreadedServerSocket tss = new ThreadedServerSocket(serverSocket.accept());
+				ThreadedServerSocket tss = new ThreadedServerSocket(serverSocket.accept(), this.router);
 				tss.start();
-				
-				this.msg = tss.getMsg();
-				// break;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

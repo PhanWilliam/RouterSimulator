@@ -9,16 +9,13 @@ public class ThreadedServerSocket extends Thread{
 
 	private Socket socket;
 	private BufferedReader input;
-	private PrintWriter output;
-	private String msg;
+	private PrintWriter output;	
+	private Router router;
 	
-	public ThreadedServerSocket(Socket socket) throws IOException {		
+	public ThreadedServerSocket(Socket socket, Router router) throws IOException {		
 		this.socket = socket;		
+		this.router = router;
 		// System.out.println(this + " socket created");
-	}
-	
-	public String getMsg() {
-		return this.msg;
 	}
 	
 	@Override
@@ -31,8 +28,10 @@ public class ThreadedServerSocket extends Thread{
 			String inputLine;
 			while ((inputLine = input.readLine()) != null) {
 				if(inputLine.equals("Goodbye")) break;
-				output.println("Server give this message: " + inputLine);
+				output.println("Server give this message: your message have been received well");
 				System.out.println("Server received this message: " + inputLine);
+				
+				router.receive(new Message().DecodeMessage(inputLine));
 			}
 			
 			input.close();
