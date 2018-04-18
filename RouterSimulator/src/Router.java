@@ -96,6 +96,7 @@ public class Router{
 	 */
 	public void receive(Message msg)
 	{
+		System.out.println(this + " receive message");
 		System.out.println(msg.EncodeMessage());
 	}
 	
@@ -135,8 +136,10 @@ public class Router{
 		}while(!portAvailable);
 		
 		ThreadedClientSocket threadedSocket = new ThreadedClientSocket(
-				"127.0.0.1", portNumber, msg.getMsg());
+				"127.0.0.1", portNumber, msg.EncodeMessage());
 		threadedSocket.start();
+		
+		System.out.println(this + " send message");
 	}
 	public int[][] initializeRoutingTable() {
 		int [][]graph=new int[5][5];
@@ -252,7 +255,7 @@ public class Router{
 			broadCast();
 			counter++;
 		}
-		return 0;
+		return 1;
 	}
 	/**
 	 * Enable the router to fill its own routing table graph
@@ -277,13 +280,8 @@ public class Router{
 		
 	}
 	public void listen(int port) throws IOException {		
-		ThreadedServer server = new ThreadedServer(port);
+		ThreadedServer server = new ThreadedServer(port, this);
 		server.start();	
-				
-//		while(server.isAlive()) {
-//			
-//		}
-//		this.receive(new Message().DecodeMessage(server.getMsg()));
 	}
 
 }
