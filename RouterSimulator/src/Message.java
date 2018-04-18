@@ -34,6 +34,10 @@ public class Message {
 		this.receiver = receiver;
 	}
 
+	public Message() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	public Message(String msg, Host sender, Host receiver) {
 		super();
 		this.msg = msg;

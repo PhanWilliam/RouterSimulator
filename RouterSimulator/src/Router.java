@@ -83,9 +83,8 @@ public class Router{
 	 */
 	public void receive(Message msg)
 	{
-		
+		System.out.println(msg.EncodeMessage());
 	}
-	
 	
 	
 	/**
@@ -109,18 +108,21 @@ public class Router{
 		int portNumber = msg.getReceiver().getPortNumber();
 		boolean portAvailable = false;
 		
-		do {
+		do{
 			try {				
 				neighbors[next_hop_index].listen(portNumber);
 				portAvailable = true;
 			} catch (Exception e) {
 				portAvailable = false;
 				portNumber++;
+				e.printStackTrace();
+				Scanner scan = new Scanner(System.in);
+				scan.nextLine();
 			}
 		}while(!portAvailable);
 		
 		ThreadedClientSocket threadedSocket = new ThreadedClientSocket(
-				/*msg.getReceiver().getIpAddress()*/"127.0.0.1", portNumber, msg.getMsg());
+				"127.0.0.1", portNumber, msg.getMsg());
 		threadedSocket.start();
 	}
 	
@@ -214,8 +216,12 @@ public class Router{
 	
 	public void listen(int port) throws IOException {		
 		ThreadedServer server = new ThreadedServer(port);
-		server.start();		
-		// this.receive(server.getMsg());
+		server.start();	
+				
+//		while(server.isAlive()) {
+//			
+//		}
+//		this.receive(new Message().DecodeMessage(server.getMsg()));
 	}
 
 }

@@ -34,11 +34,18 @@ public class ThreadedServer extends Thread{
 				tss.start();
 				
 				this.msg = tss.getMsg();
-				break;
+				// break;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+		
+		/*try {
+			this.serverSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 		/*try {
 			Socket socket = serverSocket.accept();
 			Scanner scan = new Scanner(socket.getInputStream());
