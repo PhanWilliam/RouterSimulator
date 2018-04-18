@@ -20,7 +20,6 @@ public class Router/* implements Runnable*/{
 	 * Router id used to uniquely identifies the router.
 	 */
 	private int id;
-	
 	public int getId() {
 		return id;
 	}
@@ -57,6 +56,7 @@ public class Router/* implements Runnable*/{
 	 * router class.
 	 * @throws IOException 
 	 */
+	
 	public Router(){
 		// TODO router amount is fix into 5, 
 		// maybe there are better ways to do this though		
@@ -90,7 +90,12 @@ public class Router/* implements Runnable*/{
 	 *   > Do routing function to send the msg to another
 	 *     router.
 	 */
-	public void receive(Message msg) {}
+	public void receive(Message msg)
+	{
+		
+	}
+	
+	
 	
 	/**
 	 * Enable the router to send message
@@ -114,6 +119,8 @@ public class Router/* implements Runnable*/{
 		output.write("write msg here");
 		String result = input.nextLine();
 		System.out.println(result);
+		
+		
 	}
 	
 	/**
@@ -200,7 +207,10 @@ public class Router/* implements Runnable*/{
 	 *   determine the next hop.
 	 * - Send the message to another router.
 	 */
-	public void routing(Message msg) {}
+	public void routing(Message msg) 
+	{
+		
+	}
 	
 	public void listen(int port) throws IOException {		
 //		ServerSocket serverSocket = new ServerSocket(port);		
