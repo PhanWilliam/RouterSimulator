@@ -46,7 +46,8 @@ public class Message {
 	}
 	public String EncodeMessage()
 	{
-		String s = msg + "#" + sender + "#" + receiver;
+		String s = msg + "#" + sender.getIpAddress() + "#" + sender.getPortNumber() + "#"
+				+ receiver.getIpAddress() + "#" + receiver.getPortNumber();
 		return s;
 	}
 	
@@ -54,10 +55,18 @@ public class Message {
 	{
 		String[] output = s.split("#");
 		msg = output[0];
-		String hostSenderIp = sender.getIpAddress();
-		String hostSenderPort = Integer.toString(sender.getPortNumber());
-		String hostReceiverIp = receiver.getIpAddress();
-		String hostReceiverPort = Integer.toString(receiver.getPortNumber());
+		
+		//Host h = new Host(ipAddress, portNumber);
+		this.sender = new Host(output[1], Integer.parseInt(output[2]));
+		this.receiver = new Host(output[3], Integer.parseInt(output[4]));
+		
+		
+		
+		
+//		String hostSenderIp = sender.getIpAddress();
+//		String hostSenderPort = Integer.toString(sender.getPortNumber());
+//		String hostReceiverIp = receiver.getIpAddress();
+//		String hostReceiverPort = Integer.toString(receiver.getPortNumber());
 		return new Message(s, sender, receiver);
 	}
 }
