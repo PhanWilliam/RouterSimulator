@@ -8,6 +8,7 @@ public class Host {
 		this.ipAddress=ipAddress;
 		this.portNumber=portNumber;
 	}
+	
 	/**
 	 * Enable the Host class to decode a message
 	 * and determine the Host in the message.
@@ -19,7 +20,6 @@ public class Host {
 	
 	public Host[] decode(Message msg) {
 		// TODO change the return to the host values.
-		
 		return null;
 	}
 	public String getIpAddress() {

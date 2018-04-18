@@ -12,7 +12,7 @@ import java.util.Vector;
 
 import org.omg.CosNaming.NamingContextPackage.NotEmpty;
 
-public class Router/* implements Runnable*/{
+public class Router{
 	
 	public static int id_counter = 0;
 	
@@ -20,7 +20,6 @@ public class Router/* implements Runnable*/{
 	 * Router id used to uniquely identifies the router.
 	 */
 	private int id;
-	
 	public int getId() {
 		return id;
 	}
@@ -46,6 +45,7 @@ public class Router/* implements Runnable*/{
 	 * process.
 	 */
 	private Router neighbors[];
+	
 	public Router[] getNeighbors() {
 		return neighbors;
 	}
@@ -60,37 +60,24 @@ public class Router/* implements Runnable*/{
 	 * which means, host will contain only
 	 * socket address, without actual threading.
 	 */
-	private Vector<Host> host;
-	
-	/**
-	 * Each router will run its own using their
-	 * own thread.
-	 * */
-	private Thread thread;	
+	private Vector<Host> host;	
 	
 	/**
 	 * Create new objects contained in the 
 	 * router class.
 	 * @throws IOException 
 	 */
+	
 	public Router(){
 		// TODO router amount is fix into 5, 
 		// maybe there are better ways to do this though		
 		this.neighbors = new Router[5];
 		this.host = new Vector<Host>();
-		// this.thread = new Thread(this);	
 		this.id = Router.id_counter++;
 		
 		initializeDistance();
 		readFile();
 		this.routingTable=new RoutingTable(initializeRoutingTable());
-	}
-	
-	/**
-	 * Start the router by starting the thread.
-	 */
-	public void startRouter() {
-		this.thread.start();
 	}
 
 	/**
@@ -107,7 +94,11 @@ public class Router/* implements Runnable*/{
 	 *   > Do routing function to send the msg to another
 	 *     router.
 	 */
-	public void receive(Message msg) {}
+	public void receive(Message msg)
+	{
+		System.out.println(msg.EncodeMessage());
+	}
+	
 	
 	/**
 	 * Enable the router to send message
@@ -124,13 +115,28 @@ public class Router/* implements Runnable*/{
 	 */
 	public void send(Message msg) throws UnknownHostException, IOException {
 		// TODO turn msg into string here
-		Socket socket = new Socket(msg.getReceiver().getIpAddress(), msg.getReceiver().getPortNumber());
-		Scanner input = new Scanner(socket.getInputStream());
-		PrintWriter output = new PrintWriter(socket.getOutputStream());
 		
-		output.write("write msg here");
-		String result = input.nextLine();
-		System.out.println(result);
+		// TODO do routing		
+		int next_hop_index = this.routing(msg);
+		int portNumber = msg.getReceiver().getPortNumber();
+		boolean portAvailable = false;
+		
+		do{
+			try {				
+				neighbors[next_hop_index].listen(portNumber);
+				portAvailable = true;
+			} catch (Exception e) {
+				portAvailable = false;
+				portNumber++;
+				e.printStackTrace();
+				Scanner scan = new Scanner(System.in);
+				scan.nextLine();
+			}
+		}while(!portAvailable);
+		
+		ThreadedClientSocket threadedSocket = new ThreadedClientSocket(
+				"127.0.0.1", portNumber, msg.getMsg());
+		threadedSocket.start();
 	}
 	public int[][] initializeRoutingTable() {
 		int [][]graph=new int[5][5];
@@ -167,6 +173,7 @@ public class Router/* implements Runnable*/{
 		}
 		distance[this.id]=0;
 	}
+	
 	/**
 	 * Enable the router to read a file and extracting
 	 * the router next hop and distance.
@@ -175,7 +182,6 @@ public class Router/* implements Runnable*/{
 	 * of the following:
 	 * - File the RoutingTable with the value from the file.
 	 */
-	
 	public void readFile() {
 		Vector<String> content = new Vector<String>();
 		try {
@@ -240,11 +246,13 @@ public class Router/* implements Runnable*/{
 	 *   determine the next hop.
 	 * - Send the message to another router.
 	 */
-	public void routing(Message msg) {
+
+	public int routing(Message msg) {
 		if(counter==0) {
 			broadCast();
 			counter++;
 		}
+		return 0;
 	}
 	/**
 	 * Enable the router to fill its own routing table graph
@@ -269,40 +277,13 @@ public class Router/* implements Runnable*/{
 		
 	}
 	public void listen(int port) throws IOException {		
-//		ServerSocket serverSocket = new ServerSocket(port);		
-//		
-//		while (true) {
-//			new ThreadedSocket(serverSocket.accept()).start();
-//		}
 		ThreadedServer server = new ThreadedServer(port);
-		server.start();
+		server.start();	
+				
+//		while(server.isAlive()) {
+//			
+//		}
+//		this.receive(new Message().DecodeMessage(server.getMsg()));
 	}
-	/*@Override
-	public void run() {
-		// keep router alive
-		while(true) {			
-			// TODO router logics
-		}
-	}*/
-	
-	/*public static void main(String[] args) throws NumberFormatException, IOException {		
-		// System.out.println(Integer.parseInt(args[0]));
-		// Router.id_counter++;
-		int port = 0;
-		System.out.print("Enter port number: ");
-		java.util.Scanner scan = new java.util.Scanner(System.in);
-		port = scan.nextInt();
-		scan.nextLine();
-		
-		Router router = new Router();
-		System.out.println(router.getId() + " is starting");
-		
-		try {
-			router.listen(port);
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-		
-	}*/
+
 }

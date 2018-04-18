@@ -1,12 +1,10 @@
 
 public class Message {
 	private String msg;
-	
 	/**
 	 * Specify which host that sends the message.
 	 */	
 	private Host sender;
-	
 	/**
 	 * Specify which host that receive the message.
 	 */	
@@ -36,10 +34,30 @@ public class Message {
 		this.receiver = receiver;
 	}
 
+	public Message() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	public Message(String msg, Host sender, Host receiver) {
 		super();
 		this.msg = msg;
 		this.sender = sender;
 		this.receiver = receiver;
+	}
+	public String EncodeMessage()
+	{
+		String s = msg + "#" + sender + "#" + receiver;
+		return s;
+	}
+	
+	public Message DecodeMessage(String s)
+	{
+		String[] output = s.split("#");
+		msg = output[0];
+		String hostSenderIp = sender.getIpAddress();
+		String hostSenderPort = Integer.toString(sender.getPortNumber());
+		String hostReceiverIp = receiver.getIpAddress();
+		String hostReceiverPort = Integer.toString(receiver.getPortNumber());
+		return new Message(s, sender, receiver);
 	}
 }
