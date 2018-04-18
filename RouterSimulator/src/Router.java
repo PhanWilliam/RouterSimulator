@@ -1,6 +1,10 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Scanner;
@@ -8,7 +12,9 @@ import java.util.Vector;
 
 import org.omg.CosNaming.NamingContextPackage.NotEmpty;
 
-public class Router implements Runnable{
+public class Router/* implements Runnable*/{
+	
+	public static int id_counter = 0;
 	
 	/**
 	 * Router id used to uniquely identifies the router.
@@ -44,18 +50,20 @@ public class Router implements Runnable{
 	 * Each router will run its own using their
 	 * own thread.
 	 * */
-	private Thread thread;
+	private Thread thread;	
 	
 	/**
 	 * Create new objects contained in the 
 	 * router class.
+	 * @throws IOException 
 	 */
-	public Router() {
+	public Router(){
 		// TODO router amount is fix into 5, 
 		// maybe there are better ways to do this though		
 		this.neighbors = new Router[5];
 		this.host = new Vector<Host>();
-		this.thread = new Thread(this);		
+		// this.thread = new Thread(this);	
+		this.id = Router.id_counter++;
 		
 		initializeDistance();
 		readFile();
@@ -94,8 +102,19 @@ public class Router implements Runnable{
 	 * - Acknowledge if the packet is sent.
 	 * - Know the destination of the message.
 	 * - Able to make another router to receive the msg.
+	 * @throws IOException 
+	 * @throws UnknownHostException 
 	 */
-	public void send(Message msg) {}
+	public void send(Message msg) throws UnknownHostException, IOException {
+		// TODO turn msg into string here
+		Socket socket = new Socket(msg.getReceiver().getIpAddress(), msg.getReceiver().getPortNumber());
+		Scanner input = new Scanner(socket.getInputStream());
+		PrintWriter output = new PrintWriter(socket.getOutputStream());
+		
+		output.write("write msg here");
+		String result = input.nextLine();
+		System.out.println(result);
+	}
 	
 	/**
 	 * Initialize all the distance to possible neighbor to
@@ -107,7 +126,7 @@ public class Router implements Runnable{
 		for(int i=0;i<5;i++) {
 			distance[i] = Integer.MAX_VALUE;
 		}
-		distance[this.id]=0;
+		// distance[this.id]=0;
 	}
 	/**
 	 * Enable the router to read a file and extracting
@@ -183,12 +202,41 @@ public class Router implements Runnable{
 	 */
 	public void routing(Message msg) {}
 	
-	@Override
+	public void listen(int port) throws IOException {		
+//		ServerSocket serverSocket = new ServerSocket(port);		
+//		
+//		while (true) {
+//			new ThreadedSocket(serverSocket.accept()).start();
+//		}
+		ThreadedServer server = new ThreadedServer(port);
+		server.start();
+	}
+	/*@Override
 	public void run() {
 		// keep router alive
 		while(true) {			
 			// TODO router logics
 		}
-	}
+	}*/
 	
+	/*public static void main(String[] args) throws NumberFormatException, IOException {		
+		// System.out.println(Integer.parseInt(args[0]));
+		// Router.id_counter++;
+		int port = 0;
+		System.out.print("Enter port number: ");
+		java.util.Scanner scan = new java.util.Scanner(System.in);
+		port = scan.nextInt();
+		scan.nextLine();
+		
+		Router router = new Router();
+		System.out.println(router.getId() + " is starting");
+		
+		try {
+			router.listen(port);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+	}*/
 }
