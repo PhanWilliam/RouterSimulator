@@ -62,6 +62,10 @@ public class Router{
 	 */
 	private Vector<Host> host;	
 	
+	public Vector<Host> getHost() {
+		return host;
+	}
+
 	/**
 	 * Create new objects contained in the 
 	 * router class.
@@ -98,6 +102,7 @@ public class Router{
 	{
 		System.out.println(msg.EncodeMessage());
 	}
+	
 	
 	
 	/**
@@ -201,9 +206,9 @@ public class Router{
 				distance[Integer.parseInt(temp[0])]=Integer.parseInt(temp[1]);
 			}
 			else if(string.startsWith("H")) {
-				String temp;
-				temp = string.substring(1,string.length());
-				this.host.add(new Host(temp,80));
+				String temp[];
+				temp = string.substring(1,string.length()).split("#");
+				this.host.add(new Host(temp[0],Integer.parseInt(temp[1])));
 				
 			}
 		}
@@ -225,9 +230,14 @@ public class Router{
 	 *   connected directly to the router.
 	 * - Return the boolean value.
 	 */
-	public boolean checkHost(Host host) {		
-		// TODO change the return value according to the logic
-		return false;
+	public boolean checkHost(int routerId) {	
+		if(routerId==this.id) {
+			return true;
+		}
+		else {
+			return false;
+			
+		}
 	}
 	
 	/**
@@ -248,11 +258,42 @@ public class Router{
 	 */
 
 	public int routing(Message msg) {
-		if(counter==0) {
-			broadCast();
-			counter++;
+		if(checkHost(findMessageDestination(msg))==true) {
+			// if host is known
+			return this.id;
 		}
-		return 0;
+		else {
+			//finding next hop
+			if(counter==0) {
+				broadCast();
+				counter++;
+			}
+			int [] djikstraResult = new int [5];
+			djikstraResult=this.routingTable.dijkstra(this.id);
+			
+			
+			int temp=djikstraResult[findMessageDestination(msg)];
+			int nextHop=0;
+			while(temp!=0) {
+				nextHop = temp;
+				temp=djikstraResult[temp];
+			}
+			return nextHop;
+			
+		}
+		
+	}
+	
+	public int findMessageDestination(Message msg) {
+		for (Router i : neighbors) {
+			for (Host j : i.getHost()) {
+				if(j.getIpAddress().equals(msg.getReceiver().getIpAddress())) {
+					return i.getId();
+				}
+			}
+		}
+		return -1;
+		
 	}
 	/**
 	 * Enable the router to fill its own routing table graph
