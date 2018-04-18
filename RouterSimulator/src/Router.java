@@ -20,7 +20,6 @@ public class Router{
 	 * Router id used to uniquely identifies the router.
 	 */
 	private int id;
-	
 	public int getId() {
 		return id;
 	}
@@ -56,6 +55,7 @@ public class Router{
 	 * router class.
 	 * @throws IOException 
 	 */
+	
 	public Router(){
 		// TODO router amount is fix into 5, 
 		// maybe there are better ways to do this though		
@@ -81,7 +81,12 @@ public class Router{
 	 *   > Do routing function to send the msg to another
 	 *     router.
 	 */
-	public void receive(Message msg) {}
+	public void receive(Message msg)
+	{
+		
+	}
+	
+	
 	
 	/**
 	 * Enable the router to send message
