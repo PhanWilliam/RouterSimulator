@@ -7,6 +7,15 @@ public class RoutingTable {
 	 */
 	private int graph[][];
 	
+	
+	public int[][] getGraph() {
+		return graph;
+	}
+
+	public void setGraph(int[][] graph) {
+		this.graph = graph;
+	}
+
 	/**
 	 * For a router graph ABCDE, the path will be return
 	 * based on the order ABCDE given on the graph.

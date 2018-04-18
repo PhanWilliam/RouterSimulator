@@ -28,7 +28,16 @@ public class Router/* implements Runnable*/{
 	public void setId(int id) {
 		this.id = id;
 	}
+	private int counter=0;
+	private RoutingTable routingTable;
+	
+	public RoutingTable getRoutingTable() {
+		return routingTable;
+	}
 
+	public void setRoutingTable(RoutingTable routingTable) {
+		this.routingTable = routingTable;
+	}
 	/**
 	 * Each router know about the other router
 	 * by having the objects in their class.
@@ -37,6 +46,13 @@ public class Router/* implements Runnable*/{
 	 * process.
 	 */
 	private Router neighbors[];
+	public Router[] getNeighbors() {
+		return neighbors;
+	}
+
+	public void setNeighbors(Router[] neighbors) {
+		this.neighbors = neighbors;
+	}
 	private int distance[]=new int [5];
 	
 	/**
@@ -67,6 +83,7 @@ public class Router/* implements Runnable*/{
 		
 		initializeDistance();
 		readFile();
+		this.routingTable=new RoutingTable(initializeRoutingTable());
 	}
 	
 	/**
@@ -115,6 +132,28 @@ public class Router/* implements Runnable*/{
 		String result = input.nextLine();
 		System.out.println(result);
 	}
+	public int[][] initializeRoutingTable() {
+		int [][]graph=new int[5][5];
+		for(int i=0;i<5;i++) {
+			for(int j=0;j<5;j++) {
+				if(i==j) {
+					graph[i][j]=0;
+				}
+				else if(i==this.id) {
+					graph[i][j]=distance[j];
+					
+				}
+				else if(j==this.id) {
+					graph[i][j]=distance[i];
+				}
+				else {
+					graph[i][j]=Integer.MAX_VALUE;
+				}
+			}
+		}
+		
+		return graph;
+	}
 	
 	/**
 	 * Initialize all the distance to possible neighbor to
@@ -126,7 +165,7 @@ public class Router/* implements Runnable*/{
 		for(int i=0;i<5;i++) {
 			distance[i] = Integer.MAX_VALUE;
 		}
-		// distance[this.id]=0;
+		distance[this.id]=0;
 	}
 	/**
 	 * Enable the router to read a file and extracting
@@ -191,6 +230,7 @@ public class Router/* implements Runnable*/{
 	 * 
 	 * TODO make sure that the router could do everything of
 	 * the following:
+	 * - If the host is known
 	 * - If the host of destination address is unknown to 
 	 * 	 this router, then:
 	 * 	 > Check each neighbor's host for the destination address
@@ -200,8 +240,34 @@ public class Router/* implements Runnable*/{
 	 *   determine the next hop.
 	 * - Send the message to another router.
 	 */
-	public void routing(Message msg) {}
-	
+	public void routing(Message msg) {
+		if(counter==0) {
+			broadCast();
+			counter++;
+		}
+	}
+	/**
+	 * Enable the router to fill its own routing table graph
+	 * 
+	 */
+	public void broadCast() {
+		int temp[][] = new int[5][5];
+		for (Router i : neighbors) {
+			temp = this.routingTable.getGraph();
+			
+			for(int j=0;j<5;j++) {
+				for(int k=0;k<5;k++) {
+					if(temp[j][k]>i.getRoutingTable().getGraph()[j][k]) {
+						temp[j][k]=i.getRoutingTable().getGraph()[j][k];
+						
+					}
+					
+				}
+			}
+			this.routingTable.setGraph(temp);
+		}
+		
+	}
 	public void listen(int port) throws IOException {		
 //		ServerSocket serverSocket = new ServerSocket(port);		
 //		
