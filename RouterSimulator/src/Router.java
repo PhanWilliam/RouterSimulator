@@ -100,8 +100,20 @@ public class Router{
 	 */
 	public void receive(Message msg)
 	{
-		System.out.println(this + " receive message");
-		System.out.println(msg.EncodeMessage());
+		if (this.id == findMessageDestination(msg)) {
+			System.out.println(this+ "("+ this.id +")" + " receive message");
+			System.out.println(msg.EncodeMessage());
+			return;
+		}
+		
+		try {
+			System.out.println(this + "("+ this.id +")" + " sending...");
+			this.send(msg);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -120,10 +132,21 @@ public class Router{
 	 * @throws UnknownHostException 
 	 */
 	public void send(Message msg) throws UnknownHostException, IOException {
-		// TODO turn msg into string here
-		
-		// TODO do routing		
 		int next_hop_index = this.routing(msg);
+		
+		// System.out.println("next_hop_index(1) = " + next_hop_index);
+		
+		if (next_hop_index == this.id) {			
+			if(this.id == findMessageDestination(msg)) {				
+				this.receive(msg);
+				return;
+			}			
+		}
+			
+		if(next_hop_index == this.id)
+			next_hop_index = findMessageDestination(msg);
+		// System.out.println("next_hop_index(2) = " + next_hop_index);
+		
 		int portNumber = msg.getReceiver().getPortNumber();
 		boolean portAvailable = false;
 		
@@ -134,9 +157,7 @@ public class Router{
 			} catch (Exception e) {
 				portAvailable = false;
 				portNumber++;
-				e.printStackTrace();
-				Scanner scan = new Scanner(System.in);
-				scan.nextLine();
+				// e.printStackTrace();
 			}
 		}while(!portAvailable);
 		
@@ -144,7 +165,7 @@ public class Router{
 				"127.0.0.1", portNumber, msg.EncodeMessage());
 		threadedSocket.start();
 		
-		System.out.println(this + " send message");
+		System.out.println(this + "("+ this.id +")" + " send message");
 	}
 	public int[][] initializeRoutingTable() {
 		int [][]graph=new int[5][5];
@@ -275,15 +296,23 @@ public class Router{
 			int [] djikstraResult = new int [5];
 			djikstraResult=this.routingTable.dijkstra(this.id);
 			
+			// System.out.println("Dijkstra Result: ");
+//			for (int i = 0; i < djikstraResult.length; i++) {
+//				System.out.print(djikstraResult[i] + " ");
+//			}
+//			System.out.println("");
 			
 			int temp=djikstraResult[findMessageDestination(msg)];
-			int nextHop=0;
-			while(temp!=0) {
-				nextHop = temp;
-				temp=djikstraResult[temp];
-			}
-			return nextHop;
+//			int nextHop=0;
+//			while(temp!=0) {
+//				nextHop = temp;
+//				temp=djikstraResult[temp];
+//				System.out.println(nextHop);
+//			}
 			
+//			System.out.println(nextHop);
+//			System.out.println(temp);
+			return temp;			
 		}
 		
 	}

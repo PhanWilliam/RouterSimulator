@@ -20,7 +20,7 @@ public class Naldo {
 		}
 		
 		
-		System.out.println(router0.routing(new Message("HelloBitches", new Host("192.168.1.2", 80),new Host("192.168.4.2", 90))));
+		System.out.println(router0.routing(new Message("Hello", new Host("192.168.1.2", 80),new Host("192.168.4.2", 90))));
 //		for(int i=0;i<5;i++) {
 //			for(int j=0;j<5;j++) {
 //				System.out.print(router0.getRoutingTable().getGraph()[i][j]+" ");

@@ -35,6 +35,7 @@ public class ThreadedServer extends Thread{
 				ThreadedServerSocket tss = new ThreadedServerSocket(serverSocket.accept(), this.router);
 				tss.start();
 			} catch (IOException e) {
+				System.out.println("error");
 				e.printStackTrace();
 			}
 		}

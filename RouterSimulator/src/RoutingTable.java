@@ -45,6 +45,17 @@ public class RoutingTable {
 		System.out.println("");
 	}
 	
+	public int[] convertResultAccordingToSource(int arr[], int source) {
+		for (int i = 0; i < arr.length; i++) {
+			if(arr[i] == 0)
+				arr[i] = source;
+			else if(arr[i] <= source)
+				arr[i]--;			
+		}
+		
+		return arr;
+	}
+	
 	/**
 	 * Change the location of the source to be the most
 	 * left of the graph.
@@ -181,6 +192,7 @@ public class RoutingTable {
 		
 		prev = moveResult(prev, originalSource);
 		dist = moveResult(dist, originalSource);
+		prev = convertResultAccordingToSource(prev, originalSource);
 		
 		return prev;
 	}

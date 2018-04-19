@@ -38,6 +38,7 @@ public class ThreadedServerSocket extends Thread{
 			output.close();		
 			socket.close();
 		} catch (IOException e) {
+			System.out.println("error 2");
 			e.printStackTrace();
 		}
 			

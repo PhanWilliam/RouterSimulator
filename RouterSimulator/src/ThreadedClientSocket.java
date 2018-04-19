@@ -35,6 +35,7 @@ public class ThreadedClientSocket extends Thread{
 			input.close();
 			socket.close();
 		} catch (IOException e) {
+			System.out.println("error 1");
 			e.printStackTrace();
 		}
 	}
