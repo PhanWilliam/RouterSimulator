@@ -214,7 +214,7 @@ public class Router{
 	public void readFile() {
 		Vector<String> content = new Vector<String>();
 		try {
-			Scanner in = new Scanner(new FileReader("RoutersFile/"+this.id+".txt"));
+			Scanner in = new Scanner(new FileReader("RoutersFile2/"+this.id+".txt"));
 			while(in.hasNextLine()) {
 				content.add(in.nextLine());
 			}
@@ -303,16 +303,16 @@ public class Router{
 //			System.out.println("");
 			
 			int temp=djikstraResult[findMessageDestination(msg)];
-//			int nextHop=0;
-//			while(temp!=0) {
-//				nextHop = temp;
-//				temp=djikstraResult[temp];
-//				System.out.println(nextHop);
-//			}
+			int nextHop=this.id;
+			while(temp!=this.id) {
+				nextHop = temp;
+				temp=djikstraResult[temp];
+				System.out.println(nextHop);
+			}
 			
-//			System.out.println(nextHop);
-//			System.out.println(temp);
-			return temp;			
+			System.out.println("nextHop " + nextHop);
+			// System.out.println("temp " + temp);
+			return nextHop;			
 		}
 		
 	}
