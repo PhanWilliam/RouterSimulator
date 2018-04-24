@@ -54,7 +54,7 @@ public class Message {
 	public Message DecodeMessage(String s)
 	{
 		String[] output = s.split("#");
-		msg = output[0];
+		this.msg = output[0];
 		
 		//Host h = new Host(ipAddress, portNumber);
 		this.sender = new Host(output[1], Integer.parseInt(output[2]));
@@ -67,6 +67,6 @@ public class Message {
 //		String hostSenderPort = Integer.toString(sender.getPortNumber());
 //		String hostReceiverIp = receiver.getIpAddress();
 //		String hostReceiverPort = Integer.toString(receiver.getPortNumber());
-		return new Message(s, sender, receiver);
+		return new Message(msg, sender, receiver);
 	}
 }

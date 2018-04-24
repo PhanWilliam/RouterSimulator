@@ -102,7 +102,8 @@ public class Router{
 	{
 		if (this.id == findMessageDestination(msg)) {
 			System.out.println(this+ "("+ this.id +")" + " receive message");
-			System.out.println(msg.EncodeMessage());
+			System.out.println("From: "+msg.getSender().getIpAddress());
+			System.out.println("Message: "+msg.getMsg());
 			return;
 		}
 		
@@ -140,11 +141,12 @@ public class Router{
 			if(this.id == findMessageDestination(msg)) {				
 				this.receive(msg);
 				return;
-			}			
+			}
+			next_hop_index = findMessageDestination(msg);
 		}
 			
-		if(next_hop_index == this.id)
-			next_hop_index = findMessageDestination(msg);
+		
+			
 		// System.out.println("next_hop_index(2) = " + next_hop_index);
 		
 		int portNumber = msg.getReceiver().getPortNumber();
@@ -307,10 +309,10 @@ public class Router{
 			while(temp!=this.id) {
 				nextHop = temp;
 				temp=djikstraResult[temp];
-				System.out.println(nextHop);
+			//	System.out.println(nextHop);
 			}
 			
-			System.out.println("nextHop " + nextHop);
+			//System.out.println("nextHop " + nextHop);
 			// System.out.println("temp " + temp);
 			return nextHop;			
 		}
