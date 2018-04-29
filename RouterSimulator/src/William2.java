@@ -19,6 +19,7 @@ public class William2 {
 		Message msg = new Message("Hello World", h1, h2);
 		
 		try {
+			
 			routers[0].send(msg);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();

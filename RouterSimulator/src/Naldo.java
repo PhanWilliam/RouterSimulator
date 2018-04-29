@@ -1,26 +1,34 @@
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.Scanner;
 import java.util.Vector;
 
 public class Naldo {
 
 	public static void main(String[] args) {
-		Router router0 = new Router();
-		Router router1 = new Router();
-		Router router2 = new Router();
-		Router router3 = new Router();
-		Router router4 = new Router();
+		Router[] routers = new Router[5];
 		
-		Router [] listRouter = new Router[5];
-		listRouter[0]=router0;
-		listRouter[1]=router1;
-		listRouter[2]=router2;
-		listRouter[3]=router3;
-		listRouter[4]=router4;
-		for (Router router : listRouter) {
-			router.setNeighbors(listRouter);
+		for (int i = 0; i < routers.length; i++) {
+			routers[i] = new Router();
 		}
 		
+		for (int i = 0; i < routers.length; i++) {
+			routers[i].setNeighbors(routers);
+		}
 		
-		System.out.println(router0.routing(new Message("Hello", new Host("192.168.1.2", 80),new Host("192.168.4.2", 90))));
+		Host h1 = new Host("192.168.1.2", 80);
+		Host h2 = new Host("192.168.4.2", 80);
+		Message msg = new Message("Hello World", h1, h2);
+		Scanner in = new Scanner(System.in);
+		in.nextLine();
+		try {
+			
+			routers[0].send(msg);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 //		for(int i=0;i<5;i++) {
 //			for(int j=0;j<5;j++) {
 //				System.out.print(router0.getRoutingTable().getGraph()[i][j]+" ");

@@ -115,6 +115,16 @@ public class RoutingTable {
 		
 		return arr;
 	}	
+	public String encodeRoutingTable() {
+		String message = "RTIE";
+		for(int i=0;i<5;i++) {
+			for(int j=0;j<5;j++) {
+				message+="|"+graph[i][j];
+			}	
+		}
+			
+		return message;
+	}
 	
 	/**
 	 * Evaluate the graph to find the shortest path.

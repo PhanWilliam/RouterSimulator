@@ -20,7 +20,7 @@ public class ThreadedServerSocket extends Thread{
 	
 	@Override
 	public void run() {		
-		String incomingMessage = "";
+		//String incomingMessage = "";
 		try {
 			this.output = new PrintWriter(socket.getOutputStream(), true);
 			this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));			

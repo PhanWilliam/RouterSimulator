@@ -8,6 +8,8 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import org.omg.CosNaming.NamingContextPackage.NotEmpty;
@@ -15,7 +17,7 @@ import org.omg.CosNaming.NamingContextPackage.NotEmpty;
 public class Router{
 	
 	public static int id_counter = 0;
-	
+	private int counter=0;
 	/**
 	 * Router id used to uniquely identifies the router.
 	 */
@@ -27,7 +29,7 @@ public class Router{
 	public void setId(int id) {
 		this.id = id;
 	}
-	private int counter=0;
+	
 	private RoutingTable routingTable;
 	
 	public RoutingTable getRoutingTable() {
@@ -54,6 +56,7 @@ public class Router{
 		this.neighbors = neighbors;
 	}
 	private int distance[]=new int [5];
+	private int isNeighbor[]=new int [5];
 	
 	/**
 	 * Host is stored 'virtually'
@@ -65,7 +68,7 @@ public class Router{
 	public Vector<Host> getHost() {
 		return host;
 	}
-
+	Timer t = new Timer();
 	/**
 	 * Create new objects contained in the 
 	 * router class.
@@ -80,8 +83,19 @@ public class Router{
 		this.id = Router.id_counter++;
 		
 		initializeDistance();
+		initializeIsNeighbor();
 		readFile();
 		this.routingTable=new RoutingTable(initializeRoutingTable());
+		t.scheduleAtFixedRate(new TimerTask() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				
+				broadcast2();
+				
+			}
+		}, 2000, 5000);
 	}
 
 	/**
@@ -101,10 +115,16 @@ public class Router{
 	public void receive(Message msg)
 	{
 		if (this.id == findMessageDestination(msg)) {
-			System.out.println(this+ "("+ this.id +")" + " receive message");
-			System.out.println("From: "+msg.getSender().getIpAddress());
-			System.out.println("Message: "+msg.getMsg());
+			if(msg.getMsg().startsWith("RTIE|")) {
+				
+				
+			}
+			else {
+				System.out.println(this+ "("+ this.id +")" + " receive message");
+				System.out.println("From: "+msg.getSender().getIpAddress());
+				System.out.println("Message: "+msg.getMsg());
 			return;
+			}
 		}
 		
 		try {
@@ -144,8 +164,6 @@ public class Router{
 			}
 			next_hop_index = findMessageDestination(msg);
 		}
-			
-		
 			
 		// System.out.println("next_hop_index(2) = " + next_hop_index);
 		
@@ -201,10 +219,15 @@ public class Router{
 	public void initializeDistance() {
 		for(int i=0;i<5;i++) {
 			distance[i] = Integer.MAX_VALUE;
+			
 		}
 		distance[this.id]=0;
 	}
-	
+	public void initializeIsNeighbor() {
+		for(int i=0;i<5;i++) {
+			isNeighbor[i]=0;
+		}
+	}
 	/**
 	 * Enable the router to read a file and extracting
 	 * the router next hop and distance.
@@ -230,6 +253,7 @@ public class Router{
 				String temp[] ;
 				temp = string.substring(1,string.length()).split("#");
 				distance[Integer.parseInt(temp[0])]=Integer.parseInt(temp[1]);
+				isNeighbor[Integer.parseInt(temp[0])]=1;
 			}
 			else if(string.startsWith("H")) {
 				String temp[];
@@ -291,10 +315,10 @@ public class Router{
 
 		else {
 			//finding next hop
-			if(counter==0) {
-				broadCast();
-				counter++;
-			}
+//			if(counter%3==0) {
+//				broadcast();
+//				counter++;
+//			}
 			int [] djikstraResult = new int [5];
 			djikstraResult=this.routingTable.dijkstra(this.id);
 			
@@ -334,7 +358,7 @@ public class Router{
 	 * Enable the router to fill its own routing table graph
 	 * 
 	 */
-	public void broadCast() {
+	public void broadcast() {
 		int temp[][] = new int[5][5];
 		for (Router i : neighbors) {
 			temp = this.routingTable.getGraph();
@@ -349,6 +373,29 @@ public class Router{
 				}
 			}
 			this.routingTable.setGraph(temp);
+		}
+		
+	}
+	
+	
+	public void broadcast2() {
+		System.out.println("Router"+this.id+"  Broadcasting....");
+		int temp[][] = new int[5][5];
+		for(int i=0;i<5;i++) {
+			if(isNeighbor[i]==1) {
+				temp=this.routingTable.getGraph();
+				for(int j=0;j<5;j++) {
+					for(int k=0;k<5;k++) {
+						if(temp[j][k]>getNeighbors()[i].getRoutingTable().getGraph()[j][k]) {
+							temp[j][k]=getNeighbors()[i].getRoutingTable().getGraph()[j][k];
+							
+						}
+						
+					}
+				}
+				this.routingTable.setGraph(temp);
+			}
+			
 		}
 		
 	}
