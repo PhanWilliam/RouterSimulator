@@ -13,7 +13,7 @@ public class ThreadedServer extends Thread{
 	public ThreadedServer(int port, Router router) throws IOException {
 		serverSocket = new ServerSocket(port);
 		this.router = router;
-		System.out.println(serverSocket + " listening on port " + port);		
+	//	System.out.println(serverSocket + " listening on port " + port);		
 	}
 	
 	public void close() {
@@ -30,7 +30,7 @@ public class ThreadedServer extends Thread{
 	
 	@Override
 	public void run() {
-		while (true) {
+	//	while (true) {
 			try {
 				ThreadedServerSocket tss = new ThreadedServerSocket(serverSocket.accept(), this.router);
 				tss.start();
@@ -38,7 +38,7 @@ public class ThreadedServer extends Thread{
 				System.out.println("error");
 				e.printStackTrace();
 			}
-		}
+	//	}
 		
 		/*try {
 			this.serverSocket.close();

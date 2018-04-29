@@ -28,9 +28,10 @@ public class ThreadedServerSocket extends Thread{
 			String inputLine;
 			while ((inputLine = input.readLine()) != null) {
 				if(inputLine.equals("Goodbye")) break;
-				output.println("Server give this message: your message have been received well");
-				System.out.println("Server received this message: " + inputLine);
-				
+				if(!inputLine.startsWith("RTIE_")) {
+					output.println("Server give this message: your message have been received well");
+					System.out.println("Server received this message: " + inputLine);
+				}
 				router.receive(new Message().DecodeMessage(inputLine));
 			}
 			

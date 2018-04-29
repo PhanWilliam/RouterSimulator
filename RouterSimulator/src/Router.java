@@ -86,6 +86,10 @@ public class Router{
 		initializeIsNeighbor();
 		readFile();
 		this.routingTable=new RoutingTable(initializeRoutingTable());
+		
+	}
+	public void on() {
+		System.out.println("Router"+this.id+" is on");
 		t.scheduleAtFixedRate(new TimerTask() {
 			
 			@Override
@@ -95,9 +99,9 @@ public class Router{
 				broadcast2();
 				
 			}
-		}, 2000, 5000);
+		}, 10000, 10000);
+		
 	}
-
 	/**
 	 * Enable the router to receive message
 	 * from other router.
@@ -115,9 +119,10 @@ public class Router{
 	public void receive(Message msg)
 	{
 		if (this.id == findMessageDestination(msg)) {
-			if(msg.getMsg().startsWith("RTIE|")) {
-				
-				
+			if(msg.getMsg().startsWith("RTIE_")) {
+//				System.out.println("TEST "+msg.getMsg());
+				this.routingTable.decodeUpdateRoutingTable(msg.getMsg());
+				return;
 			}
 			else {
 				System.out.println(this+ "("+ this.id +")" + " receive message");
@@ -153,7 +158,13 @@ public class Router{
 	 * @throws UnknownHostException 
 	 */
 	public void send(Message msg) throws UnknownHostException, IOException {
-		int next_hop_index = this.routing(msg);
+		int next_hop_index=-1;
+		if(msg.getMsg().startsWith("RTIE_")) {
+			next_hop_index=findMessageDestination(msg);
+		}
+		else {
+			next_hop_index = this.routing(msg);
+		}
 		
 		// System.out.println("next_hop_index(1) = " + next_hop_index);
 		
@@ -185,7 +196,9 @@ public class Router{
 				"127.0.0.1", portNumber, msg.EncodeMessage());
 		threadedSocket.start();
 		
-		System.out.println(this + "("+ this.id +")" + " send message");
+		if(!msg.getMsg().startsWith("RTIE_")) {
+			System.out.println(this + "("+ this.id +")" + " send message");
+		}
 	}
 	public int[][] initializeRoutingTable() {
 		int [][]graph=new int[5][5];
@@ -358,42 +371,52 @@ public class Router{
 	 * Enable the router to fill its own routing table graph
 	 * 
 	 */
-	public void broadcast() {
-		int temp[][] = new int[5][5];
-		for (Router i : neighbors) {
-			temp = this.routingTable.getGraph();
-			
-			for(int j=0;j<5;j++) {
-				for(int k=0;k<5;k++) {
-					if(temp[j][k]>i.getRoutingTable().getGraph()[j][k]) {
-						temp[j][k]=i.getRoutingTable().getGraph()[j][k];
-						
-					}
-					
-				}
-			}
-			this.routingTable.setGraph(temp);
-		}
-		
-	}
+//	public void broadcast() {
+//		int temp[][] = new int[5][5];
+//		for (Router i : neighbors) {
+//			temp = this.routingTable.getGraph();
+//			
+//			for(int j=0;j<5;j++) {
+//				for(int k=0;k<5;k++) {
+//					if(temp[j][k]>i.getRoutingTable().getGraph()[j][k]) {
+//						temp[j][k]=i.getRoutingTable().getGraph()[j][k];
+//						
+//					}
+//					
+//				}
+//			}
+//			this.routingTable.setGraph(temp);
+//		}
+//		
+//	}
 	
 	
 	public void broadcast2() {
-		System.out.println("Router"+this.id+"  Broadcasting....");
-		int temp[][] = new int[5][5];
-		for(int i=0;i<5;i++) {
+	//	System.out.println("Router"+this.id+"  Broadcasting....");
+	//	int temp[][] = new int[5][5];
+		for(int i=0;i<neighbors.length;i++) {
 			if(isNeighbor[i]==1) {
-				temp=this.routingTable.getGraph();
-				for(int j=0;j<5;j++) {
-					for(int k=0;k<5;k++) {
-						if(temp[j][k]>getNeighbors()[i].getRoutingTable().getGraph()[j][k]) {
-							temp[j][k]=getNeighbors()[i].getRoutingTable().getGraph()[j][k];
-							
-						}
-						
-					}
+//				temp=this.routingTable.getGraph();
+//				for(int j=0;j<5;j++) {
+//					for(int k=0;k<5;k++) {
+//						if(temp[j][k]>getNeighbors()[i].getRoutingTable().getGraph()[j][k]) {
+//							temp[j][k]=getNeighbors()[i].getRoutingTable().getGraph()[j][k];
+//							
+//						}
+//						
+//					}
+//				}
+//				this.routingTable.setGraph(temp);
+				
+				try {
+					send(new Message(this.routingTable.encodeRoutingTable(),this.host.firstElement(),neighbors[i].host.firstElement()));
+				} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				this.routingTable.setGraph(temp);
 			}
 			
 		}

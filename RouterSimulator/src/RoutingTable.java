@@ -114,16 +114,31 @@ public class RoutingTable {
 		arr[source] = temp;
 		
 		return arr;
-	}	
+	}
+	//rtie = routing table information exchange
 	public String encodeRoutingTable() {
-		String message = "RTIE";
+		String rtie = "RTIE";
 		for(int i=0;i<5;i++) {
 			for(int j=0;j<5;j++) {
-				message+="|"+graph[i][j];
+				rtie+="_"+graph[i][j];
 			}	
 		}
 			
-		return message;
+		return rtie;
+	}
+	public void decodeUpdateRoutingTable(String rtie) {
+		
+		String [] temp = rtie.split("_");
+		int counter=1;
+		
+		for(int i=0;i<5;i++) {
+			for(int j=0;j<5;j++) {
+				if(graph[i][j]>Integer.parseInt(temp[counter])) {
+					graph[i][j]=Integer.parseInt(temp[counter]);
+				}
+				counter++;
+			}
+		}
 	}
 	
 	/**
@@ -206,4 +221,5 @@ public class RoutingTable {
 		
 		return prev;
 	}
+	
 }
