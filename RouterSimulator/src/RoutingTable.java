@@ -211,8 +211,8 @@ public class RoutingTable {
 				}
 			}
 			
-			// printDistAndPrev(dist, prev);
-			// System.out.println("==================================");
+//			 printDistAndPrev(dist, prev);
+//			 System.out.println("==================================");
 		}
 		
 		prev = moveResult(prev, originalSource);

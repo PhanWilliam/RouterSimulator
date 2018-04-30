@@ -27,7 +27,7 @@ public class Naldo {
 			
 		}
 		Host h1 = new Host("192.168.1.2", 80);
-		Host h2 = new Host("192.168.4.2", 80);
+		Host h2 = new Host("192.168.5.2", 80);
 		Message msg = new Message("Hello World", h1, h2);
 		Scanner in = new Scanner(System.in);
 		in.nextLine();

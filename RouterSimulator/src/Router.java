@@ -86,7 +86,7 @@ public class Router{
 		initializeIsNeighbor();
 		readFile();
 		this.routingTable=new RoutingTable(initializeRoutingTable());
-		
+		this.on();
 	}
 	public void on() {
 		System.out.println("Router"+this.id+" is on");
@@ -99,7 +99,7 @@ public class Router{
 				broadcast2();
 				
 			}
-		}, 10000, 10000);
+		}, 5000, 10000);
 		
 	}
 	/**
@@ -125,7 +125,7 @@ public class Router{
 				return;
 			}
 			else {
-				System.out.println(this+ "("+ this.id +")" + " receive message");
+				System.out.println(this.getHost().get(0).getIpAddress()+" RouterID"+ "("+ this.id +")" + " received the message!");
 				System.out.println("From: "+msg.getSender().getIpAddress());
 				System.out.println("Message: "+msg.getMsg());
 			return;
@@ -242,7 +242,7 @@ public class Router{
 		}
 	}
 	/**
-	 * Enable the router to read a file and extracting
+	 * Enable the router to read a file and extracting0
 	 * the router next hop and distance.
 	 * 
 	 * TODO make sure that the router could do everything 
@@ -252,7 +252,7 @@ public class Router{
 	public void readFile() {
 		Vector<String> content = new Vector<String>();
 		try {
-			Scanner in = new Scanner(new FileReader("RoutersFile2/"+this.id+".txt"));
+			Scanner in = new Scanner(new FileReader("RoutersFile/"+this.id+".txt"));
 			while(in.hasNextLine()) {
 				content.add(in.nextLine());
 			}
@@ -275,7 +275,6 @@ public class Router{
 				
 			}
 		}
-		
 	}
 	
 	
@@ -335,16 +334,19 @@ public class Router{
 			int [] djikstraResult = new int [5];
 			djikstraResult=this.routingTable.dijkstra(this.id);
 			
-			// System.out.println("Dijkstra Result: ");
+//			System.out.println("Dijkstra Result: ");
 //			for (int i = 0; i < djikstraResult.length; i++) {
 //				System.out.print(djikstraResult[i] + " ");
 //			}
 //			System.out.println("");
-			
+			// System.out.println(findMessageDestination(msg));
 			int temp=djikstraResult[findMessageDestination(msg)];
+			
 			int nextHop=this.id;
+			// System.out.println("this id " + this.id);
 			while(temp!=this.id) {
 				nextHop = temp;
+//				System.out.println("temp " + temp);
 				temp=djikstraResult[temp];
 			//	System.out.println(nextHop);
 			}
